@@ -8,7 +8,7 @@ class App extends Component{
   render(){
     return (
       // The router element allows you to navigate other views as the user performs application tasks
-      // The <Route> elements will point to component. The App calls the component file and the component cutomizes that component
+      // The <Route> elements will point to component files. The App calls the component files and the component files cutomize the components as needed/written
       <Router>
         <div className="container">
           <h2>MERN-Stack Todo App</h2>
