@@ -1,4 +1,4 @@
-// Server.js
+// Server.js //
 
 // Express object set up and call express library
 const express = require('express');
@@ -14,21 +14,29 @@ const PORT = 4000;
 // connect the schema to your express router
 const todoRoutes = express.Router();
 
+let Todo = require('./todo.model');
+
 
 // Tell the server to use the cors library
 app.use(cors());
 // Tell the server to use the bodyParser library with the format for JSON objects
 app.use(bodyParser.json())
-// Tell the server to use the express router (your middleware that will start taking control of request starting with path '/todos')
-app.use('/todos', todoRoutes);
+
+// Set up the connection to the mongodb server 
+// "mongodb://127.0.0.1:27017/todos" is the default mongo path
+mongoose.connect('mongodb://127.0.0.1:27017/todos', {useNewUrlParser:true});
+const connection = mongoose.connection;
+
+// Do a one time console log so that you know that you're server is set up
+connection.once('open',function(){
+    console.log("MongoDB database connection established successfully!");
+})
 
 
-// Add an endpoint which is grabbing all available todos items, you feed your function a request argument and a result argument
+// Endpoint which is grabbing all available todos items, you feed your function a request argument and a result argument
 todoRoutes.route('/').get(function(req,res){
-    
     // Here is your error handling    
-    todoRoutes.find(function(err,todos){
-
+    Todo.find(function(err,todos){
         if(err){
             // if an error has occured, log it in the console
             console.log(err);
@@ -40,8 +48,7 @@ todoRoutes.route('/').get(function(req,res){
     });
 });
 
-
-// Add another endpoint used to get a todo item by feeding it an id
+// Endpoint used to get a todo item by referencing the todo item's id
 todoRoutes.route('/:id').get(function(req, res) {
     let id = req.params.id;
     Todo.findById(id, function(err, todo) {
@@ -49,18 +56,48 @@ todoRoutes.route('/:id').get(function(req, res) {
     });
 });
 
-
-
-
-// Set up the connection to the mongodb server 
-// "mongodb://127.0.0.1:27017/todos" is the default mongo path
-mongoose.connect('mongodb://127.0.0.1:27017/todos', {useNewUrlParser:true});
-const connection = mongoose.connection;
-
-// Do a one time console log so that you know that you're server is set up
-connection.once('open',function(){
-    console.log("MongoDB database connection established successfully!");
+// Endpoint used to add new todo items by sending an HTTP Post request, the HTTP POST request body so you need to use 'req.body' to see the contents
+todoRoutes.route('/add').post(function(req, res){
+    let todo = new Todo(req.body);
+    todo.save()
+        .then(todo => {
+            res.status(200).json({'todo':'todo added successfully'});
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed!');
+        })
 })
+
+// Endpoint used to update a todo item
+todoRoutes.route('/update/:id').post(function(req, res){
+    Todo.findById(req.params.id, function(err, todo){
+        // if you're searching for a todo item id that does not exist, throw back an error status
+        if (!todo){
+            res.status(400).send("data is not found");
+        }
+        // if you find the id that you're looking for, update the data associated with this id with your request 
+        // primarily to change a todo item from 'not completed' to 'completed'
+        else{
+            todo.todo_description = req.body.todo_description;
+            todo.todo_responsible = req.body.todo_responsible;
+            todo.todo_priority = req.body.todo_priority;
+            todo.todo_completed = req.body.todo_completed;
+        }
+        // save the newly updated todo item to the server and notify the user that the deed has been done
+        todo.save().then(todo => {
+            res.json('Todo updated!');
+        })
+
+        // something has gone wrong in trying to update this todo item so notify the user
+        .catch(err => {
+            res.status(400).send("Update not possible!");
+        })
+    })
+})
+
+
+// Tell the server to use the express router
+app.use('/todos', todoRoutes);
 
 // Have node server setup on the port object from above and return the string that says what port it is established on
 app.listen(PORT, function(){
