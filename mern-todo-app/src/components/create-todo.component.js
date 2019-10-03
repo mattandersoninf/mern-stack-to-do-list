@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 
 export default class CreateTodo extends Component{
     // this is the constructor method that is the default state for responsibilities in the todo list.
@@ -40,10 +41,23 @@ export default class CreateTodo extends Component{
         // this line ensures that the default html behavior does not occur
         // we're just recording what's going on in the log because the server has not been set up yet
         e.preventDefault();
+
         console.log(`Form submitted:`);
         console.log(`Todo Description: ${this.state.todo_description}`);
         console.log(`Todo Responsible: ${this.state.todo_responsible}`);
         console.log(`Todo Priority: ${this.state.todo_priority}`);
+        
+        // Create the todo item object that will be passed into the server
+        const newTodo = {
+            todo_description : this.state.todo_description,
+            todo_responsible : this.state.todo_responsible,
+            todo_priority : this.state.todo_priority,
+            todo_completed : this.state.todo_completed
+        }
+        
+        // Call the axios library to talk with the server
+        axios.post('http://localhost:4000/todos/add', newTodo)
+            .then(res => console.log(res.data));
         
         this.setState({
             todo_description: '',
@@ -52,6 +66,7 @@ export default class CreateTodo extends Component{
             todo_completed: false
         })
     }
+
     // this is the JSX code that will render the form for the todo list
     render() {
         return (
