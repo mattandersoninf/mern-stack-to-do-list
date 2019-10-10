@@ -12,6 +12,9 @@ const Todo = props => (
         <td>
             <Link to={"/edit/"+props.todo._id}>Edit</Link>
         </td>
+        <td>
+            <button type="submit">Delete</button>
+        </td>
     </tr>
 )
 
@@ -39,6 +42,14 @@ export default class TodosList extends Component{
             })
     }
 
+    handleSubmit = event =>{
+        event.preventDefault();
+        axios.delete('http://localhost:4000/todos/'+this.props.todo._id)
+            .then(res => console.log(res.data));
+        
+        this.props.history.push('/');
+    }
+
     todoList(){
         return this.state.todos.map(function(currentTodo,i){
             return <Todo todo={currentTodo} key={i} />;
@@ -56,6 +67,7 @@ export default class TodosList extends Component{
                             <th>Responsible</th>
                             <th>Priority</th>
                             <th>Action</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
