@@ -95,6 +95,13 @@ todoRoutes.route('/update/:id').post(function(req, res){
     })
 })
 
+// Endpoint used for deleting todo items
+todoRoutes.route('/:id').delete((req, res) =>{
+    Todo.findByIdAndDelete(req.params.id)
+        .then(()=>res.json('Todo item deleted.'))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
 
 // Tell the server to use the express router
 app.use('/todos', todoRoutes);

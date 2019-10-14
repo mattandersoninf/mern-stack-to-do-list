@@ -9,6 +9,7 @@ const Todo = props => (
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_description}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_responsible}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_priority}</td>
+        <a href="#" onClick={() => {props.deleteTodoItem(props.todo._id)}}>Delete</a>
         <td>
             <Link to={"/edit/"+props.todo._id}>Edit</Link>
         </td>
@@ -43,6 +44,12 @@ export default class TodosList extends Component{
         return this.state.todos.map(function(currentTodo,i){
             return <Todo todo={currentTodo} key={i} />;
         })
+    }
+
+    deleteTodoItem(id){
+        console.log(id);
+        axios.delete('http://localhost:4000/todos/'+id)
+            .then(res => console.log(res.data));
     }
 
     render(){
