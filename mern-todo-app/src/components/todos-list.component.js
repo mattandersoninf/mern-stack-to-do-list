@@ -4,14 +4,14 @@ import {Link} from 'react-router-dom';
 import axios from 'axios';
 
 // Page where you can edit the todo items
+// https://www.youtube.com/watch?v=7CqJlxBYj-M&t=903s
 const Todo = props => (
     <tr>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_description}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_responsible}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_priority}</td>
-        <a href="#" onClick={() => {props.deleteTodoItem(props.todo._id)}}>Delete</a>
         <td>
-            <Link to={"/edit/"+props.todo._id}>Edit</Link>
+            <Link to={"/edit/"+props.todo._id}>Edit</Link> | <a href="#" onClick={() => {props.deleteTodoItem(props.todo._id)}}>Delete</a>
         </td>
     </tr>
 )
@@ -22,7 +22,8 @@ export default class TodosList extends Component{
     // initialize an empty array
     constructor(props){
         super(props);
-        this.state = {todos:[]}
+        this.deleteTodoItem = this.deleteTodoItem.bind(this);
+        this.state = {todos:[]};
     }
 
 
@@ -50,6 +51,10 @@ export default class TodosList extends Component{
         console.log(id);
         axios.delete('http://localhost:4000/todos/'+id)
             .then(res => console.log(res.data));
+            
+        this.setState({
+            todos :this.state.todos.filter(el => el._id !== id)
+        });
     }
 
     render(){
