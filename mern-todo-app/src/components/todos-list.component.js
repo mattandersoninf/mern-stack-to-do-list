@@ -11,7 +11,7 @@ const Todo = props => (
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_responsible}</td>
         <td className={props.todo.todo_completed ? 'completed' : ''}>{props.todo.todo_priority}</td>
         <td>
-            <Link to={"/edit/"+props.todo._id}>Edit</Link> | <a href="#" onClick={() => {props.deleteTodoItem(props.todo._id)}}>Delete</a>
+            <Link to={"/edit/"+props.todo._id}>Edit</Link> | <button onClick={() => {props.deleteTodoItem(props.todo._id)}}>Delete</button>
         </td>
     </tr>
 )
@@ -22,7 +22,7 @@ export default class TodosList extends Component{
     // initialize an empty array
     constructor(props){
         super(props);
-        this.deleteTodoItem = this.deleteTodoItem.bind(this);
+        this.deleteTodoItem = this.deleteTodoItem.bind(this)
         this.state = {todos:[]};
     }
 
@@ -33,29 +33,42 @@ export default class TodosList extends Component{
         axios.get('http://localhost:4000/todos/')
             // fill the empty array with all of the todo items stored in the server
             .then(response => {
-                this.setState({todos:response.data});
+                this.setState({todos:response.data})
             })
             // error handling
             .catch(function(error){
                 console.log(error);
             })
     }
-
-    todoList(){
-        return this.state.todos.map(function(currentTodo,i){
-            return <Todo todo={currentTodo} key={i} />;
-        })
-    }
+    
 
     deleteTodoItem(id){
         console.log(id);
         axios.delete('http://localhost:4000/todos/'+id)
-            .then(res => console.log(res.data));
+            .then(res => {console.log(res.data)});
             
         this.setState({
             todos :this.state.todos.filter(el => el._id !== id)
-        });
+        })
     }
+
+    /*
+    deleteExercise(id) {
+        axios.delete('http://localhost:5000/exercises/'+id)
+        .then(response => { console.log(response.data)});
+
+        this.setState({
+        exercises: this.state.exercises.filter(el => el._id !== id)
+        })
+    }
+    */
+
+    todoList(){
+        return this.state.todos.map(function(currentTodo,i){
+            return <Todo todo={currentTodo} key={i} deleteTodoItem={this.deleteTodoItem}/>;
+        })
+    }
+
 
     render(){
         return(
