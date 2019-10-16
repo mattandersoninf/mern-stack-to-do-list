@@ -22,7 +22,6 @@ export default class TodosList extends Component{
     // initialize an empty array
     constructor(props){
         super(props);
-        this.deleteTodoItem = this.deleteTodoItem.bind(this)
         this.state = {todos:[]};
     }
 
@@ -42,7 +41,7 @@ export default class TodosList extends Component{
     }
     
 
-    deleteTodoItem(id){
+    deleteTodoItem = (id) =>{
         console.log(id);
         axios.delete('http://localhost:4000/todos/'+id)
             .then(res => {console.log(res.data)});
@@ -50,24 +49,13 @@ export default class TodosList extends Component{
         this.setState({
             todos :this.state.todos.filter(el => el._id !== id)
         })
-    }
+    };
 
-    /*
-    deleteExercise(id) {
-        axios.delete('http://localhost:5000/exercises/'+id)
-        .then(response => { console.log(response.data)});
-
-        this.setState({
-        exercises: this.state.exercises.filter(el => el._id !== id)
-        })
-    }
-    */
-
-    todoList(){
+    todoList = () =>{
         return this.state.todos.map(function(currentTodo,i){
-            return <Todo todo={currentTodo} key={i} deleteTodoItem={this.deleteTodoItem}/>;
+            return <Todo todo={currentTodo} deleteTodoItem={this.deleteTodoItem}/>;
         })
-    }
+    };
 
 
     render(){

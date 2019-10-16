@@ -77,7 +77,7 @@ export default class EditTodo extends Component{
         };
         console.log(obj);
         console.log(this.props.match.params.id);
-        axios.delete('http://localhost:4000/todos/update'+this.props.match.params.id, obj)
+        axios.post('http://localhost:4000/todos/update/'+this.props.match.params.id, obj)
             .then(res => console.log(res.data));
         
         this.props.history.push('/');
