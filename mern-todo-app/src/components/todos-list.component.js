@@ -25,7 +25,6 @@ export default class TodosList extends Component{
         this.state = {todos:[]};
     }
 
-
     // called once the component is mounted
     componentDidMount(){
         // send the function that gets all of the todo items currently in the database
@@ -39,7 +38,6 @@ export default class TodosList extends Component{
                 console.log(error);
             })
     }
-    
 
     deleteTodoItem = (id) =>{
         console.log(id);
@@ -52,11 +50,10 @@ export default class TodosList extends Component{
     };
 
     todoList = () =>{
-        return this.state.todos.map(function(currentTodo,i){
+        return this.state.todos.map((currentTodo,i) => {
             return <Todo todo={currentTodo} deleteTodoItem={this.deleteTodoItem}/>;
         })
     };
-
 
     render(){
         return(
